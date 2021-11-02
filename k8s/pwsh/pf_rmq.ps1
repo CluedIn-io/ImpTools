@@ -1,0 +1,1 @@
+kubectl port-forward cluedin-poc-rabbitmq-0 15672

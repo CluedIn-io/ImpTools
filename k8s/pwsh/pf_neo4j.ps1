@@ -1,0 +1,1 @@
+kubectl port-forward cluedin-poc-neo4j-58db447777-p95bg 7474

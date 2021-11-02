@@ -1,0 +1,1 @@
+kubectl.exe get cm -o yaml cluedin-poc-server

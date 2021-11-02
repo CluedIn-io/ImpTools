@@ -1,0 +1,1 @@
+kubectl port-forward cluedin-poc-sqlserver-fcbb864d6-tf6f6 1433
