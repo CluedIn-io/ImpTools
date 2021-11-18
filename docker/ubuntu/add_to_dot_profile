@@ -1,0 +1,5 @@
+#./manage_cluedin.sh
+echo 
+echo "-------------------------------------"
+echo "recommend you run ./manage_cluedin.sh"
+echo "-------------------------------------"
