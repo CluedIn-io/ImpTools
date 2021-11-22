@@ -65,6 +65,8 @@ else
 	echo installing powershell
 	wget https://github.com/PowerShell/PowerShell/releases/download/v7.1.5/powershell_7.1.5-1.ubuntu.20.04_amd64.deb
 	dpkg -i powershell_7.1.5-1.ubuntu.20.04_amd64.deb
+	# ensure dependancies get installed
+	apt --fix-broken install
 	pwsh --version
 fi
 
