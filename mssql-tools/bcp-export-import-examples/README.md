@@ -80,15 +80,13 @@ bcp vClaimsVehicle out vClaimsVehicle.dat -F 1 -L 1000 -S example.database.windo
 
 ```
 azureuser@UbuntuCluedInAPACDemo2:~/DATA-DB$ grep PASS ~/Home-Dev/src/env/325/.env
-CLUEDIN_EMAIL_PASS=
-CLUEDIN_RABBITMQ_PASSWORD=
-CLUEDIN_SQLSERVER_PASS=redacted(!)redacted
+SQLSERVER_PASS=redacted(!)redacted
 
 azureuser@UbuntuCluedInAPACDemo2:~/DATA-DB$ sudo docker ps | grep sql
 3e2f9a73f7b6   cluedin/sqlserver:release-3.2.5                       "sh -c /init/init.sh"    6 days ago   Up 3 days             0.0.0.0:1433->1433/tcp, :::1433->1433/tcp                                                                                                                                                                            cluedin_325_c87357d5_sqlserver_1
 
-export CLUEDIN_SQLSERVER_PASS='redacted(!)redacted
-azureuser@UbuntuCluedInAPACDemo2:~/DATA-DB$ sqlcmd -Stcp:localhost,1433 -U sa -P $CLUEDIN_SQLSERVER_PASS
+export SQLSERVER_PASS='redacted(!)redacted
+azureuser@UbuntuCluedInAPACDemo2:~/DATA-DB$ sqlcmd -Stcp:localhost,1433 -U sa -P $SQLSERVER_PASS
 1>
 
 # list all databases
@@ -107,7 +105,7 @@ azureuser@UbuntuCluedInAPACDemo2:~/DATA-DB$ for file in `ls *.fmt`; do perl fmt2
 
 ## Execute Sql to Create Tables
 ```
-azureuser@UbuntuCluedInAPACDemo2:~/DATA-DB$ for file in `ls *.sql`; do sqlcmd -Stcp:localhost,1433 -U sa -P $CLUEDIN_SQLSERVER_PASS -d DATA-DB -i $file ; done
+azureuser@UbuntuCluedInAPACDemo2:~/DATA-DB$ for file in `ls *.sql`; do sqlcmd -Stcp:localhost,1433 -U sa -P $SQLSERVER_PASS -d DATA-DB -i $file ; done
 ```
 
 ## Copy From One Database to Another using BCP
@@ -116,5 +114,6 @@ Modify variables in scripts to suit - e.g. source is external azure database, de
 1. `./list_tables.sh`
 2. `./dump_tables.sh`
 3. ```for file in `ls *.fmt`; do perl fmt2createtablesql.pl $file > $file.sql ; done```
-4. `./load_tables.sh`
+4. ```for file in `ls *.sql`; do sqlcmd -Stcp:localhost,1433 -U sa -P $SQLSERVER_PASS -d DATA-DB -i $file ; done```
+5. `./load_tables.sh`
    
