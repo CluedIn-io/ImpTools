@@ -115,6 +115,6 @@ Modify variables in scripts to suit - e.g. source is external azure database, de
 
 1. `./list_tables.sh`
 2. `./dump_tables.sh`
-3. `for file in `ls *.fmt`; do perl fmt2createtablesql.pl $file > $file.sql ; done`
+3. ```for file in `ls *.fmt`; do perl fmt2createtablesql.pl $file > $file.sql ; done```
 4. `./load_tables.sh`
    
