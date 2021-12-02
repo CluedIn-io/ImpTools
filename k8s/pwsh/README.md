@@ -10,3 +10,9 @@ https://github.com/shanoor/kubectl-aliases-powershell
 "This repository contains a script to generate hundreds of convenient kubectl PowerShell aliases programmatically."
 
 Roman: *"I personally use this (forked from this https://github.com/ahmetb/kubectl-aliases) but fairly speaking, I prefer to memoize the native commands instead of custom aliases. So the only thing I use heavily is `k` instead of `kubectl`"*
+
+# Rudi TODOs
+- add set namespace example
+- add example session using scripts
+- remove hardcoded container ids/names where possible with labels/tags/etc
+- create a table that lists script name vs function
