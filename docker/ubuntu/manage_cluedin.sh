@@ -15,6 +15,8 @@ function menu()
 	echo "X - start - opposite of stop"
 	echo "u - up - start and ensuring changed containers are created"
 	echo "w - wipe i.e. tear DOWN cluster and bring it back UP"
+	echo "d - wipe/down i.e. tear DOWN cluster"
+	echo "c - create new org and admin user"
 	echo "q - to quit"
 }
 
@@ -26,8 +28,8 @@ function anykey()
 
 pushd .
 
-tag=325beta
-cd /home/azureuser/Home-Dev/src
+tag=325
+cd /home/azureuser/Home/src
 
 while [ true ]
 do
@@ -55,6 +57,12 @@ do
 	"w")
 		sudo pwsh ./cluedin.ps1 down $tag
 		sudo pwsh ./cluedin.ps1 up $tag
+	;;
+	"d")
+		sudo pwsh ./cluedin.ps1 down $tag
+	;;
+	"c")
+		echo "If you really want this feature let Rudi know..."
 	;;
 	"q")
 		break
