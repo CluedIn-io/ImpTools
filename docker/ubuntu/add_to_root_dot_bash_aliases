@@ -1,0 +1,3 @@
+# copy or cat >> this file to /root/.bash_aliases
+
+alias home='cd /home/azureuser/Home'

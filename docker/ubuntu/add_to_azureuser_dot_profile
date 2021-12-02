@@ -1,3 +1,5 @@
+# cat this file >> to ~azureuser/.profile
+
 #./manage_cluedin.sh
 echo 
 echo "-------------------------------------"
