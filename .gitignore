@@ -5,3 +5,4 @@
 /.vs
 /dotnet-dump/.vs
 /doxygen/.vs
+/k8s/pwsh/.vs

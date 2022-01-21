@@ -1,4 +1,5 @@
-helm upgrade cluedin-poc cluedin/cluedin `
+helm upgrade cluedin-demo cluedin/cluedin `
   -n cluedin `
   --install `
-  --values C:\rudi.harris\k8s\customers\macs\values.yml
+  --version 3.2.5 `
+  --values C:\rudi.harris\k8s\cluedin\apac-demo\values.3.2.5.yml
