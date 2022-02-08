@@ -9,9 +9,10 @@ To quick create a useful learning and navigation tool for exploring code bases -
 
 ## Method
 1. `Doxyfile` into the root of your code shadow
-2. Modify `INPUT` in this file to match your root code location (e.g. for CluedIn server code this is `/src/Code`)
+   1. **Note:** If downloading using a web browser then remember to remove the `.txt` extension if added
+2. Modify `INPUT` in this file to match your root code location, default is `/src`
 3. Run `docker_run_doxygen.ps1` in a powershell from the root of the code shadow (same place as the `Doxyfile`)
-4. Run this command and wait 10 to 15 minutes
+4. Run this command in the docker container cli and wait 10 to 15 minutes
    1. `cd /src && doxygen`
 5. In a web browser open the generated file `doxygen/html/index.html`
 
