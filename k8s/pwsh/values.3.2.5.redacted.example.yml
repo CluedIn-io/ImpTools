@@ -175,7 +175,7 @@ cluedin:
   configuration: {} # extra configuration to pass to cluedin server
     # delete {} above and uncomment the line below to turn on verbose logging
     #ASPNETCORE_ENVIRONMENT: 'verbose'
-    components:
+  components:
     image: '' # name of the container to use as an installer
     packages: [] # list of extra Nuget Packages to install in server in name, or name/version pairs
                  # version should be a supported nuget version format.
