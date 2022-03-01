@@ -1,3 +1,5 @@
+# for version 3.2.5 only
+
 helm upgrade cluedin-demo cluedin/cluedin `
   -n cluedin `
   --install `

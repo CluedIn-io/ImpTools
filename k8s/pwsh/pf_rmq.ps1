@@ -3,6 +3,6 @@ $label = "app.kubernetes.io/name=rabbitmq"
 $port = 15672
 
 Write-Host "label is `"$label`", looking up name..."
-$podName = @(kubectl get pods -l $label -o name)
+$podName = @(kubectl -n cluedin get pods -l $label -o name)
 Write-Host "name is `"$podName`""
-kubectl port-forward $podName $port
+kubectl -n cluedin port-forward $podName $port

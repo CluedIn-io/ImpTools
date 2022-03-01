@@ -1,1 +1,1 @@
-kubectl delete pod -l app=submitter
+kubectl -n cluedin delete pod -l app=submitter

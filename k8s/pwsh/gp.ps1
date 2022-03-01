@@ -1,1 +1,1 @@
-kubectl get pods
+kubectl -n cluedin get pods

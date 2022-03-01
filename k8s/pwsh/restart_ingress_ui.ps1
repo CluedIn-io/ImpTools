@@ -1,2 +1,2 @@
-kubectl delete pod -l app.kubernetes.io/name=haproxy-ingress 
-kubectl delete pod -l app=ui
+kubectl -n cluedin delete pod -l app.kubernetes.io/name=haproxy-ingress 
+kubectl -n cluedin delete pod -l app=ui

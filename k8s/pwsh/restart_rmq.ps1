@@ -1,1 +1,1 @@
-kubectl delete pod -l app.kubernetes.io/name=rabbitmq
+kubectl -n cluedin delete pod -l app.kubernetes.io/name=rabbitmq
