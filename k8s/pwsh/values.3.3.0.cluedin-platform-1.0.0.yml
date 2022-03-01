@@ -27,6 +27,10 @@ application:
       password: "<redacted>"
 
   cluedin:
+    components:
+      packages:
+        - name: CluedIn.Connector.SqlServer
+          version: 3.3.0-*
     nodeSelector:
       kubernetes.cluedin.com/pooltype: process
     roles:
