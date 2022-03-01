@@ -6,6 +6,8 @@ Handy Implementation Tools and Scripts
     - helm upgrade
     - restarting groups of pods by role/function
     - common port forwarding
+    - example values yaml
+- [k8s ingress cert examples](k8s/pwsh/ingress-certificates/)
 - [k8s Pod Scripts](k8s/alpine/)
   - includes:
     - API calls from within the cluster (e.g. create users)
