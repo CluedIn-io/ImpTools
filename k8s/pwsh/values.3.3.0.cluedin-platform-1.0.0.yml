@@ -155,6 +155,9 @@ infrastructure:
           storage: "4Gi"
 
   neo4j:
+    # there appears to be an issue with 3.5.31
+    # so pinning to this one 3 Mar 2022
+    imageTag: "3.5.30"
     nodeSelector:
       kubernetes.cluedin.com/pooltype: data
     resources:
