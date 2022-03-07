@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ParseHar": {
+      "commandName": "Project",
+      "commandLineArgs": "parse *_p*.har",
+      "workingDirectory": "C:\\rudi.harris\\sunwater"
+    }
+  }
+}

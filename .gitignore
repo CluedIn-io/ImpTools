@@ -6,3 +6,6 @@
 /dotnet-dump/.vs
 /doxygen/.vs
 /k8s/pwsh/.vs
+/analysis/HAR files/ParseHar/.vs/ParseHar
+/analysis/HAR files/ParseHar/ParseHar/bin/Debug/net6.0
+/analysis/HAR files/ParseHar/ParseHar/obj
