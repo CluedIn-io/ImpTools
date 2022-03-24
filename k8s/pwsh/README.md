@@ -1,17 +1,20 @@
 # Convenience Scripts
 
-note: scripts assumpe you  already have your current context namespace set to cluedin - run [set_ns_to_cluedin.ps1](set_ns_to_cluedin.ps1) to do just that.
+Typically when I setup a new cluster, I create a new folder for it and then copy the current scripts in this folder to there. Next I update the `login.ps1` script accordlying and use that to ensure that I'm always in the correct context.
+
+note: scripts assume you already have your current context namespace set to cluedin - run [set_ns_to_cluedin.ps1](set_ns_to_cluedin.ps1) to do just that.
 
 Rudi: The intent of this folder is to store common CluedIn specific kubectl and the like commands as used by the implementation team. Please feel free to add yours.
 
 Please turn it into an example .ps1 file and feel free to commit to the above... bonus points for putting some comments in the script 😉
 
-All the port forward scripts use labels rather than pod names to ensure the scripts work across many different instances. Labels are used whereever possible.
+All the port forward scripts use labels rather than pod names to ensure the scripts work across many different instances. Labels are used where ever possible.
 
 These examples have been selected on the basis of common usage.
 
 | Script | Description |
 | --- | --- |
+|login.ps1| Example script for changing our context to the cluster of interest and ensuring we are in the right context|
 |set_ns_to_cluedin.ps1 | Set the current context to the cluedin namespace - means you don't need to put `-n cluedin` on all your `kubectl` commands |
 |gp.ps1| shortcut for `kubectl get pods`|
 |get_config_map.ps1| contains examples of useful config map commands |
@@ -19,6 +22,7 @@ These examples have been selected on the basis of common usage.
 |helm_upgrade.ps1| helm upgrade/install command for previous release (3.2.5 GA) |
 |install_haproxy-ingress.ps1| 3.2.5 haproxy install command |
 |pf_es.ps1| port forward elasticsearch to localhost |
+|pf_hangfire.ps1| port forward to access the hangfire scheduler in the processing pod - access by http://localhost:9003/hangfire |
 |pf_neo4j.ps1| port forward Neo4j 7474 to localhost |
 |pf_neo4j_2nd.ps1| port forward Neo4j 7687 to localhost (run in separate window to above one) |
 |pf_rmq.ps1| port forward rabbitmq to localhost |
@@ -35,6 +39,23 @@ These examples have been selected on the basis of common usage.
 # Example Session
 
 ```
+# ensure we are in the right context
+# the node pool looks right and the names match what I see in the Azure Portal
+# the load balancer second IP address (i.e. the public IP) matches the DNS lookup of the cluster of interest
+PS > .\login.ps1
+Switched to context "APAC-demo-k8s".
+NAME                                  STATUS   ROLES   AGE   VERSION
+aks-corepool-17590510-vmss00000e      Ready    agent   10d   v1.20.9
+aks-datapool-17590510-vmss00000s      Ready    agent   10d   v1.20.9
+aks-datapool-17590510-vmss00000t      Ready    agent   10d   v1.20.9
+aks-generalpool-17590510-vmss00000s   Ready    agent   10d   v1.20.9
+aks-generalpool-17590510-vmss00000t   Ready    agent   10d   v1.20.9
+aks-processpool-17590510-vmss00000e   Ready    agent   10d   v1.20.9
+cluedin-haproxy-ingress            LoadBalancer   10.0.90.9      20.193.9.158   80:30025/TCP,443:30007/TCP                              29d
+Non-authoritative answer:
+Name:    k1.cluedin.me
+Address:  20.193.9.158
+
 # set our namespace to default to cluedin
 PS > .\set_ns_to_cluedin.ps1
 Context "APAC-demo-k8s" modified.
