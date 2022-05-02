@@ -1,0 +1,6 @@
+{
+  "from_organization_id": "79898C75-BC05-4E74-888E-7E2FEF37AE5E",
+  "to_organization_id": "79898C75-BC05-4E74-888E-7E2FEF37AE5E",
+  "to_user_id": "edfff584-59b3-42ba-b00b-2b88d72153e2",
+  "open_communication_connection_string": "Data source=localhost;Initial catalog=DataStore.Db.OpenCommunication;User Id=sa;Password=yourStrong(!)Password;connection timeout=10;"
+}
