@@ -34,7 +34,7 @@ $command.CommandText = @"
 $result = $command.ExecuteReader()
 $table = New-Object System.Data.DataTable
 $table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json | Out-File "./data/processing-rules.json"
+$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/processing-rules.json"
 
 # ProcessingRuleRules
 $command.CommandText = @"
@@ -50,7 +50,7 @@ $command.CommandText = @"
 $result = $command.ExecuteReader()
 $table = New-Object System.Data.DataTable
 $table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json | Out-File "./data/processing-rule-rules.json"
+$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/processing-rule-rules.json"
 
 # Rules
 $command.CommandText = @"
@@ -74,7 +74,7 @@ $command.CommandText = @"
 $result = $command.ExecuteReader()
 $table = New-Object System.Data.DataTable
 $table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json | Out-File "./data/rules.json"
+$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/rules.json"
 
 
 ###############################################################################
@@ -96,7 +96,7 @@ $command.CommandText = @"
 $result = $command.ExecuteReader()
 $table = New-Object System.Data.DataTable
 $table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json | Out-File "./data/entity-type.json"
+$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/entity-type.json"
 
 ###############################################################################
 # DYNAMIC VOCABULARIES
@@ -113,7 +113,7 @@ $command.CommandText = @"
 $result = $command.ExecuteReader()
 $table = New-Object System.Data.DataTable
 $table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json | Out-File "./data/vocabulary.json"
+$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary.json"
 
 # VocabularyDefinition
 $command.CommandText = @"
@@ -136,7 +136,7 @@ $command.CommandText = @"
 $result = $command.ExecuteReader()
 $table = New-Object System.Data.DataTable
 $table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json | Out-File "./data/vocabulary-definition.json"
+$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-definition.json"
 
 # VocabularyKeyDefinition
 # TODO: filter by organization
@@ -172,7 +172,7 @@ $command.CommandText = @"
 $result = $command.ExecuteReader()
 $table = New-Object System.Data.DataTable
 $table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json | Out-File "./data/vocabulary-key-definition.json"
+$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-key-definition.json"
 
 # VocabularyKeyGroupDefinition
 # TODO: filter by organization
@@ -187,7 +187,7 @@ $command.CommandText = @"
 $result = $command.ExecuteReader()
 $table = New-Object System.Data.DataTable
 $table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json | Out-File "./data/vocabulary-key-group-definition.json"
+$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-key-group-definition.json"
 
 # VocabularyOwner
 # TODO: filter by organization
@@ -201,7 +201,7 @@ $command.CommandText = @"
 $result = $command.ExecuteReader()
 $table = New-Object System.Data.DataTable
 $table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json | Out-File "./data/vocabulary-owner.json"
+$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-owner.json"
 
 # VocabularyValue
 $command.CommandText = @"
@@ -216,7 +216,7 @@ $command.CommandText = @"
 $result = $command.ExecuteReader()
 $table = New-Object System.Data.DataTable
 $table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json | Out-File "./data/vocabulary-value.json"
+$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-value.json"
 
 ###############################################################################
 # TODO: STREAMS, EXPORT TARGETS
