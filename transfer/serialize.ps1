@@ -107,7 +107,7 @@ function serialize($config)
       [Key]
     FROM [DataStore.Db.OpenCommunication].[dbo].[Vocabulary]
     WHERE [OrganizationId] = '${from_organization_id}'
-  "@
+"@
   $result = $command.ExecuteReader()
   $table = New-Object System.Data.DataTable
   $table.Load($result)
@@ -131,6 +131,7 @@ function serialize($config)
   FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyDefinition]
   WHERE [OrganizationId] = '${from_organization_id}'
 "@
+
   $result = $command.ExecuteReader()
   $table = New-Object System.Data.DataTable
   $table.Load($result)
