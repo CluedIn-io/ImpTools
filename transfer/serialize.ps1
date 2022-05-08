@@ -1,20 +1,18 @@
-# read configs
+function serialize($config)
+{
+  $connection = New-Object System.Data.SqlClient.SqlConnection
+  $connection.ConnectionString = $config.open_communication_connection_string
+  $connection.Open()
+  $command = $connection.CreateCommand()
 
-$config = Get-Content -Path ./config.json | ConvertFrom-Json
+  ###############################################################################
+  # RULES
+  ###############################################################################
 
-$connection = New-Object System.Data.SqlClient.SqlConnection
-$connection.ConnectionString = $config.open_communication_connection_string
-$connection.Open()
-$command = $connection.CreateCommand()
+  $from_organization_id = $config.from_organization_id
 
-###############################################################################
-# RULES
-###############################################################################
-
-$from_organization_id = $config.from_organization_id
-
-# ProcessingRules
-$command.CommandText = @"
+  # ProcessingRules
+  $command.CommandText = @"
   SELECT
     [Id],
     [OwnedBy],
@@ -31,13 +29,13 @@ $command.CommandText = @"
   FROM [DataStore.Db.OpenCommunication].[dbo].[ProcessingRules]
   WHERE [OrganizationId] = '${from_organization_id}'
 "@
-$result = $command.ExecuteReader()
-$table = New-Object System.Data.DataTable
-$table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/processing-rules.json"
+  $result = $command.ExecuteReader()
+  $table = New-Object System.Data.DataTable
+  $table.Load($result)
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/processing-rules.json"
 
-# ProcessingRuleRules
-$command.CommandText = @"
+  # ProcessingRuleRules
+  $command.CommandText = @"
   SELECT 
     [ProcessingRuleId],
     [RuleId]
@@ -47,13 +45,13 @@ $command.CommandText = @"
       ON [DataStore.Db.OpenCommunication].[dbo].[ProcessingRuleRules].[ProcessingRuleId] = [DataStore.Db.OpenCommunication].[dbo].[ProcessingRules].[Id]
   WHERE [OrganizationId] = '${from_organization_id}'
 "@
-$result = $command.ExecuteReader()
-$table = New-Object System.Data.DataTable
-$table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/processing-rule-rules.json"
+  $result = $command.ExecuteReader()
+  $table = New-Object System.Data.DataTable
+  $table.Load($result)
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/processing-rule-rules.json"
 
-# Rules
-$command.CommandText = @"
+  # Rules
+  $command.CommandText = @"
   SELECT
     [Id],
     [Name],
@@ -71,18 +69,18 @@ $command.CommandText = @"
   FROM [DataStore.Db.OpenCommunication].[dbo].[Rules]
   WHERE [OrganizationId] = '${from_organization_id}'
 "@
-$result = $command.ExecuteReader()
-$table = New-Object System.Data.DataTable
-$table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/rules.json"
+  $result = $command.ExecuteReader()
+  $table = New-Object System.Data.DataTable
+  $table.Load($result)
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/rules.json"
 
 
-###############################################################################
-# ENTITIES
-###############################################################################
+  ###############################################################################
+  # ENTITIES
+  ###############################################################################
 
-# EntityType
-$command.CommandText = @"
+  # EntityType
+  $command.CommandText = @"
   SELECT
     [Id],
     [Type],
@@ -93,30 +91,30 @@ $command.CommandText = @"
     [LayoutConfiguration]
   FROM [DataStore.Db.OpenCommunication].[dbo].[EntityType]
 "@
-$result = $command.ExecuteReader()
-$table = New-Object System.Data.DataTable
-$table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/entity-type.json"
+  $result = $command.ExecuteReader()
+  $table = New-Object System.Data.DataTable
+  $table.Load($result)
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/entity-type.json"
 
-###############################################################################
-# DYNAMIC VOCABULARIES
-###############################################################################
+  ###############################################################################
+  # DYNAMIC VOCABULARIES
+  ###############################################################################
 
-# Vocabulary
-$command.CommandText = @"
-  SELECT
-    [OrganizationId],
-    [Key]
-  FROM [DataStore.Db.OpenCommunication].[dbo].[Vocabulary]
-  WHERE [OrganizationId] = '${from_organization_id}'
-"@
-$result = $command.ExecuteReader()
-$table = New-Object System.Data.DataTable
-$table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary.json"
+  # Vocabulary
+  $command.CommandText = @"
+    SELECT
+      [OrganizationId],
+      [Key]
+    FROM [DataStore.Db.OpenCommunication].[dbo].[Vocabulary]
+    WHERE [OrganizationId] = '${from_organization_id}'
+  "@
+  $result = $command.ExecuteReader()
+  $table = New-Object System.Data.DataTable
+  $table.Load($result)
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary.json"
 
-# VocabularyDefinition
-$command.CommandText = @"
+  # VocabularyDefinition
+  $command.CommandText = @"
   SELECT
     [VocabularyId],
     [VocabularyName],
@@ -133,14 +131,14 @@ $command.CommandText = @"
   FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyDefinition]
   WHERE [OrganizationId] = '${from_organization_id}'
 "@
-$result = $command.ExecuteReader()
-$table = New-Object System.Data.DataTable
-$table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-definition.json"
+  $result = $command.ExecuteReader()
+  $table = New-Object System.Data.DataTable
+  $table.Load($result)
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-definition.json"
 
-# VocabularyKeyDefinition
-# TODO: filter by organization
-$command.CommandText = @"
+  # VocabularyKeyDefinition
+  # TODO: filter by organization
+  $command.CommandText = @"
   SELECT
     [VocabularyKeyId],
     [VocabularyId],
@@ -169,14 +167,14 @@ $command.CommandText = @"
     [CreatedAt]
   FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyKeyDefinition]
 "@
-$result = $command.ExecuteReader()
-$table = New-Object System.Data.DataTable
-$table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-key-definition.json"
+  $result = $command.ExecuteReader()
+  $table = New-Object System.Data.DataTable
+  $table.Load($result)
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-key-definition.json"
 
-# VocabularyKeyGroupDefinition
-# TODO: filter by organization
-$command.CommandText = @"
+  # VocabularyKeyGroupDefinition
+  # TODO: filter by organization
+  $command.CommandText = @"
   SELECT
     [VocabularyKeyGroupId],
     [VocabularyId],
@@ -184,27 +182,27 @@ $command.CommandText = @"
     [SortOrdinal]
   FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyKeyGroupDefinition]
 "@
-$result = $command.ExecuteReader()
-$table = New-Object System.Data.DataTable
-$table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-key-group-definition.json"
+  $result = $command.ExecuteReader()
+  $table = New-Object System.Data.DataTable
+  $table.Load($result)
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-key-group-definition.json"
 
-# VocabularyOwner
-# TODO: filter by organization
-$command.CommandText = @"
+  # VocabularyOwner
+  # TODO: filter by organization
+  $command.CommandText = @"
   SELECT
     [VocabularyOwnerId],
     [OwnerId],
     [VocabularyId]
   FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyOwner]
 "@
-$result = $command.ExecuteReader()
-$table = New-Object System.Data.DataTable
-$table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-owner.json"
+  $result = $command.ExecuteReader()
+  $table = New-Object System.Data.DataTable
+  $table.Load($result)
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-owner.json"
 
-# VocabularyValue
-$command.CommandText = @"
+  # VocabularyValue
+  $command.CommandText = @"
   SELECT
     [Id],
     [Value],
@@ -213,76 +211,90 @@ $command.CommandText = @"
     [ValueRule]
   FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyValue]
 "@
-$result = $command.ExecuteReader()
-$table = New-Object System.Data.DataTable
-$table.Load($result)
-$table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-value.json"
+  $result = $command.ExecuteReader()
+  $table = New-Object System.Data.DataTable
+  $table.Load($result)
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-value.json"
 
-###############################################################################
-# TODO: STREAMS, EXPORT TARGETS
-###############################################################################
+  ###############################################################################
+  # TODO: STREAMS, EXPORT TARGETS
+  ###############################################################################
 
-# TODO: OrganizationProvider 
-# TODO: JOIN with Provider WHERE Type = Connector
-# SELECT TOP (1000) [Id]
-#       ,[OrganizationId]
-#       ,[UserId]
-#       ,[ProviderId]
-#       ,[PlanLevel]
-#       ,[Active]
-#       ,[Schedule]
-#       ,[Configuration]
-#       ,[AccountId]
-#       ,[Approved]
-#       ,[AccountDisplay]
-#       ,[FailingAuthentication]
-#       ,[LastAuthenticationError]
-#       ,[WebHooks]
-#       ,[CreatedDate]
-#       ,[AutoSync]
-#       ,[Source]
-#       ,[SourceQuality]
-#       ,[AuthType]
-#       ,[AgentId]
-#       ,[AgentGroupId]
-#       ,[JobProcessingRestriction]
-#       ,[LastJobQueueDate]
-#       ,[LastCrawlFinishTime]
-#       ,[LastJobRunId]
-#   FROM [DataStore.Db.OpenCommunication].[dbo].[OrganizationProvider]
+  # TODO: OrganizationProvider 
+  # TODO: JOIN with Provider WHERE Type = Connector
+  # SELECT TOP (1000) [Id]
+  #       ,[OrganizationId]
+  #       ,[UserId]
+  #       ,[ProviderId]
+  #       ,[PlanLevel]
+  #       ,[Active]
+  #       ,[Schedule]
+  #       ,[Configuration]
+  #       ,[AccountId]
+  #       ,[Approved]
+  #       ,[AccountDisplay]
+  #       ,[FailingAuthentication]
+  #       ,[LastAuthenticationError]
+  #       ,[WebHooks]
+  #       ,[CreatedDate]
+  #       ,[AutoSync]
+  #       ,[Source]
+  #       ,[SourceQuality]
+  #       ,[AuthType]
+  #       ,[AgentId]
+  #       ,[AgentGroupId]
+  #       ,[JobProcessingRestriction]
+  #       ,[LastJobQueueDate]
+  #       ,[LastCrawlFinishTime]
+  #       ,[LastJobRunId]
+  #   FROM [DataStore.Db.OpenCommunication].[dbo].[OrganizationProvider]
 
-# TODO: Streams
-# SELECT TOP (1000) [Id]
-#       ,[Name]
-#       ,[Description]
-#       ,[Active]
-#       ,[CreatedDate]
-#       ,[OrganizationId]
-#       ,[Condition]
-#       ,[ModifiedDate]
-#       ,[CreatedBy]
-#       ,[ModifiedBy]
-#       ,[ConnectorProviderDefinitionId]
-#       ,[ContainerName]
-#       ,[InitialIngestionLastRun]
-#       ,[InitialIngestionComplete]
-#       ,[OwnedBy]
-#       ,[ExportIncomingEdges]
-#       ,[ExportOutgoingEdges]
-#       ,[Mode]
-#   FROM [DataStore.Db.OpenCommunication].[dbo].[Streams]
+  # TODO: Streams
+  # SELECT TOP (1000) [Id]
+  #       ,[Name]
+  #       ,[Description]
+  #       ,[Active]
+  #       ,[CreatedDate]
+  #       ,[OrganizationId]
+  #       ,[Condition]
+  #       ,[ModifiedDate]
+  #       ,[CreatedBy]
+  #       ,[ModifiedBy]
+  #       ,[ConnectorProviderDefinitionId]
+  #       ,[ContainerName]
+  #       ,[InitialIngestionLastRun]
+  #       ,[InitialIngestionComplete]
+  #       ,[OwnedBy]
+  #       ,[ExportIncomingEdges]
+  #       ,[ExportOutgoingEdges]
+  #       ,[Mode]
+  #   FROM [DataStore.Db.OpenCommunication].[dbo].[Streams]
 
-# TODO: StreamMappings
-# SELECT TOP (1000) [Id]
-#       ,[StreamId]
-#       ,[SourceDataType]
-#       ,[SourceObjectType]
-#       ,[DestDataType]
-#   FROM [DataStore.Db.OpenCommunication].[dbo].[StreamMappings]
+  # TODO: StreamMappings
+  # SELECT TOP (1000) [Id]
+  #       ,[StreamId]
+  #       ,[SourceDataType]
+  #       ,[SourceObjectType]
+  #       ,[DestDataType]
+  #   FROM [DataStore.Db.OpenCommunication].[dbo].[StreamMappings]
 
-# TODO: StreamRules
-# SELECT TOP (1000) [StreamId]
-#       ,[RuleId]
-#   FROM [DataStore.Db.OpenCommunication].[dbo].[StreamRules]
+  # TODO: StreamRules
+  # SELECT TOP (1000) [StreamId]
+  #       ,[RuleId]
+  #   FROM [DataStore.Db.OpenCommunication].[dbo].[StreamRules]
 
-$connection.Close()
+  $connection.Close()
+}
+
+### MAIN ###
+if (Test-Path env:TRANSER_SKIP_MAIN)
+{
+  # we are running unit tests
+  Write-Host "running unit tests"
+}
+else
+{
+  # read configs
+  $config = Get-Content -Path ./config.json | ConvertFrom-Json
+  serialize($config)  
+}
