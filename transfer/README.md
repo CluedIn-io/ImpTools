@@ -26,6 +26,10 @@ To assist with unit tests and advanced scenarios, other environment varibles and
 | Environment `TRANSER_SKIP_MAIN` | Set to true if we are running unit tests in order to skip the main function from being executed. |
 | Environment `DEFAULT_CONNECTION_STRING` | If defined then used by the unit tests to know which database to connect to, otherwise this will be set by the unit tests if run the first time. |
 | `config.json` "outdir" | override the output directory for the json files (default is `./data`) |
+| `config.json` "process_filter" | default false, if true then only process types that have been enabled below |
+| `config.json` "process_rules" | if process_filter true then set to true to enable rules to be processed |
+| `config.json` "process_entities" | same as process_rules but for entities |
+| `config.json` "process_dynamic_vocabularies" | same as process_rules but for dynamic vocabularies |
 
 ## Serialization
 

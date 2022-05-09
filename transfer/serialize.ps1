@@ -23,14 +23,40 @@ function serialize($config)
 
   $from_organization_id = $config.from_organization_id
 
-  $processRules = $true
-  $processEntities = $true
-  $processDynamicVocabularies = $true
+  $process_rules = $true
+  $process_entities = $true
+  $process_dynamic_vocabularies = $true
+
+  if (
+      ([bool](Get-member -Name "process_filter" -InputObject $config -MemberType Properties)) -and
+      ($config.process_filter)
+     )
+  {
+    # if process_filter is on then assume all disabled unless enabled
+    $process_rules = $false
+    $process_entities = $false
+    $process_dynamic_vocabularies = $false
+
+    #Write-Host *** process_filter is on ***    
+
+    $process_rules = (
+      ([bool](Get-member -Name "process_rules" -InputObject $config -MemberType Properties)) -and
+      ($config.process_rules)
+     )
+     $process_entities = (
+      ([bool](Get-member -Name "process_entities" -InputObject $config -MemberType Properties)) -and
+      ($config.process_entities)
+     )
+     $process_dynamic_vocabularies = (
+      ([bool](Get-member -Name "process_dynamic_vocabularies" -InputObject $config -MemberType Properties)) -and
+      ($config.process_dynamic_vocabularies)
+     )
+  }
 
   ###############################################################################
   # RULES
   ###############################################################################
-  if ($processRules)
+  if ($process_rules)
   {
     # ProcessingRules
     $command.CommandText = @"
@@ -99,7 +125,7 @@ function serialize($config)
   ###############################################################################
   # ENTITIES
   ###############################################################################
-  if ($processEntities)
+  if ($process_entities)
   {
     # EntityType
     $command.CommandText = @"
@@ -122,7 +148,7 @@ function serialize($config)
   ###############################################################################
   # DYNAMIC VOCABULARIES
   ###############################################################################
-  if ($processDynamicVocabularies)
+  if ($process_dynamic_vocabularies)
   {
     # Vocabulary
     $command.CommandText = @"

@@ -169,6 +169,58 @@ Describe "Different outdir" {
     }
 }
 
+Describe "process entities only" {
+    It "dump out entities only" {
+        $id = OrgIdToUse
+        $config = @"
+        {
+            "from_organization_id": "$id",
+            "to_organization_id": "$id",
+            "to_user_id": "edfff584-59b3-42ba-b00b-2b88d72153e2",
+            "open_communication_connection_string": "$env:DEFAULT_CONNECTION_STRING",
+            "outdir": "./data_test_entities_only",
+            "process_filter": true,
+            "process_entities": true
+        }
+"@
+        Write-Host $config
+        serialize($config | ConvertFrom-Json)
+
+        $haveJson = $false
+        $numOfFiles = 0
+        Get-ChildItem -Path ".\data_test_entities_only\" -File | foreach {
+            if ($_.Name -eq 'entity-type.json')
+            {
+                $haveJson = $true
+            }
+            $numOfFiles++
+        }
+
+        $haveJson | Should Be $true
+        $numOfFiles | Should Be 1
+    }
+}
+
+Describe "lookup to_org and to_user by name" {
+    It "read the config into another outdir" {
+        $id = OrgIdToUse
+        $config = @"
+        {
+            "from_organization_id": "$id",
+            "to_organization": "transfer",
+            "to_user": "admin@transfer.com",
+            "open_communication_connection_string": "$env:DEFAULT_CONNECTION_STRING",
+            "outdir": "./data_test_default_config",
+            "process_filter": true,
+            "process_rules": true
+        }
+"@
+        Write-Host $config
+        # TODO: implement me
+        #unserialize($config | ConvertFrom-Json)
+    }
+}
+
 # restore this environment to empty
 $env:TRANSER_SKIP_MAIN = ""
 
