@@ -25,10 +25,11 @@ To assist with unit tests and advanced scenarios, other environment varibles and
 | --- | --- |
 | Environment `TRANSER_SKIP_MAIN` | Set to true if we are running unit tests in order to skip the main function from being executed. |
 | Environment `DEFAULT_CONNECTION_STRING` | If defined then used by the unit tests to know which database to connect to, otherwise this will be set by the unit tests if run the first time. |
+| `config.json` "outdir" | override the output directory for the json files (default is `./data`) |
 
 ## Serialization
 
-The following command will dump all the necessary data to `/data` directory:
+The following command will dump all the necessary data to `./data` directory:
 
 ```powershell
 .\serialize.ps1
@@ -36,7 +37,7 @@ The following command will dump all the necessary data to `/data` directory:
 
 ## Deserialization
 
-The following command will restore the `/data` files to the `to_organization_id` organization:
+The following command will restore the `./data` files to the `to_organization_id` organization:
 
 ```powershell
 .\deserialize.ps1

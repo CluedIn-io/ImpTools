@@ -1,5 +1,10 @@
 # run me from the \transfer folder
 Write-Host $pwd
+if (!($pwd -clike '*transfer'))
+{
+    Write-Host error: run from transfer folder only!!!
+    exit -1
+}
 
 # ensure when we source the script we do not run the main
 $env:TRANSER_SKIP_MAIN = "true"
@@ -7,11 +12,35 @@ $env:TRANSER_SKIP_MAIN = "true"
 # source the script under test
 . '.\serialize.ps1'
 
-if (Test-Path env:DEFAULT_CONNECTION_STRING)
-{
-    # we will use the env
+# clean up data folders
+# if data_* folder contains at least one .json file then we rmdir the folder
+Write-Host cleaning up data_* folders from previous runs
+Get-ChildItem -Path .\ –Directory | foreach {
+    if ($_.Name -clike 'data_*')
+    {
+        $dir = $_.Name;
+        $haveJson = $false
+        Get-ChildItem -Path .\$dir\ -File | foreach {
+            #Write-Host file $_.Name
+            if ($_.Name -clike '*.json')
+            {
+                $haveJson = $true
+            }
+        }
+        if ($haveJson)
+        {
+            Write-Host deleting $dir
+            Remove-Item $dir -Recurse -Force
+        }
+        else
+        {
+            Write-Host skipping $dir
+        }
+    }
 }
-else
+
+# set the default if not already set
+if (!(Test-Path env:DEFAULT_CONNECTION_STRING))
 {
     $env:DEFAULT_CONNECTION_STRING = "Data source=localhost;Initial catalog=DataStore.Db.OpenCommunication;User Id=sa;Password=yourStrong(!)Password;connection timeout=10;"
 }
@@ -70,6 +99,7 @@ function GetOrgs()
     return $out
 }
 
+# always suggest we use the first org defined
 function OrgIdToUse()
 {
     $ret = ""
@@ -78,6 +108,12 @@ function OrgIdToUse()
     if ($orgsArray.Length -gt 0)
     {
         $ret = $orgsArray[0].Id
+    }
+    else
+    {
+        Write-Host error: no orgs found in the database!!!
+        $orgsArray.Length | Should Be -gt 0
+        exit -1
     }
     return $ret
 }
@@ -90,7 +126,8 @@ Describe "Default Config" {
             "from_organization_id": "$id",
             "to_organization_id": "$id",
             "to_user_id": "edfff584-59b3-42ba-b00b-2b88d72153e2",
-            "open_communication_connection_string": "$env:DEFAULT_CONNECTION_STRING"
+            "open_communication_connection_string": "$env:DEFAULT_CONNECTION_STRING",
+            "outdir": "./data_test_default_config"
         }
 "@
         # $orgs = GetOrgs
@@ -110,6 +147,23 @@ Describe "Default Config" {
 
         # Write-Host "id of cluedin org is" $id
 
+        Write-Host $config
+        serialize($config | ConvertFrom-Json)
+    }
+}
+
+Describe "Different outdir" {
+    It "read the config into another outdir" {
+        $id = OrgIdToUse
+        $config = @"
+        {
+            "from_organization_id": "$id",
+            "to_organization_id": "$id",
+            "to_user_id": "edfff584-59b3-42ba-b00b-2b88d72153e2",
+            "open_communication_connection_string": "$env:DEFAULT_CONNECTION_STRING",
+            "outdir": "./data_test_different_outdir"
+        }
+"@
         Write-Host $config
         serialize($config | ConvertFrom-Json)
     }

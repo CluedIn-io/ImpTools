@@ -5,6 +5,22 @@ function serialize($config)
   $connection.Open()
   $command = $connection.CreateCommand()
 
+  # use ./data by default - create the folder if it doesn't exist
+  # otherwise use the outdir folder passed into the config
+  $outdir = "./data"
+  if ([bool](Get-member -Name "outdir" -InputObject $config -MemberType Properties))
+  {
+    $outdir = $config.outdir
+  }
+  if (Test-Path $outdir)
+  {
+    # exists
+  }
+  else
+  {
+    New-Item $outdir -ItemType Directory
+  }
+
   ###############################################################################
   # RULES
   ###############################################################################
@@ -32,7 +48,7 @@ function serialize($config)
   $result = $command.ExecuteReader()
   $table = New-Object System.Data.DataTable
   $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/processing-rules.json"
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/processing-rules.json"
 
   # ProcessingRuleRules
   $command.CommandText = @"
@@ -48,7 +64,7 @@ function serialize($config)
   $result = $command.ExecuteReader()
   $table = New-Object System.Data.DataTable
   $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/processing-rule-rules.json"
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/processing-rule-rules.json"
 
   # Rules
   $command.CommandText = @"
@@ -72,7 +88,7 @@ function serialize($config)
   $result = $command.ExecuteReader()
   $table = New-Object System.Data.DataTable
   $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/rules.json"
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/rules.json"
 
 
   ###############################################################################
@@ -94,7 +110,7 @@ function serialize($config)
   $result = $command.ExecuteReader()
   $table = New-Object System.Data.DataTable
   $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/entity-type.json"
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/entity-type.json"
 
   ###############################################################################
   # DYNAMIC VOCABULARIES
@@ -111,7 +127,7 @@ function serialize($config)
   $result = $command.ExecuteReader()
   $table = New-Object System.Data.DataTable
   $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary.json"
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary.json"
 
   # VocabularyDefinition
   $command.CommandText = @"
@@ -135,7 +151,7 @@ function serialize($config)
   $result = $command.ExecuteReader()
   $table = New-Object System.Data.DataTable
   $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-definition.json"
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-definition.json"
 
   # VocabularyKeyDefinition
   # TODO: filter by organization
@@ -171,7 +187,7 @@ function serialize($config)
   $result = $command.ExecuteReader()
   $table = New-Object System.Data.DataTable
   $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-key-definition.json"
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-key-definition.json"
 
   # VocabularyKeyGroupDefinition
   # TODO: filter by organization
@@ -186,7 +202,7 @@ function serialize($config)
   $result = $command.ExecuteReader()
   $table = New-Object System.Data.DataTable
   $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-key-group-definition.json"
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-key-group-definition.json"
 
   # VocabularyOwner
   # TODO: filter by organization
@@ -200,7 +216,7 @@ function serialize($config)
   $result = $command.ExecuteReader()
   $table = New-Object System.Data.DataTable
   $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-owner.json"
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-owner.json"
 
   # VocabularyValue
   $command.CommandText = @"
@@ -215,7 +231,7 @@ function serialize($config)
   $result = $command.ExecuteReader()
   $table = New-Object System.Data.DataTable
   $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "./data/vocabulary-value.json"
+  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-value.json"
 
   ###############################################################################
   # TODO: STREAMS, EXPORT TARGETS
