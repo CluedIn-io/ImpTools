@@ -21,217 +21,226 @@ function serialize($config)
     New-Item $outdir -ItemType Directory
   }
 
+  $from_organization_id = $config.from_organization_id
+
+  $processRules = $true
+  $processEntities = $true
+  $processDynamicVocabularies = $true
+
   ###############################################################################
   # RULES
   ###############################################################################
-
-  $from_organization_id = $config.from_organization_id
-
-  # ProcessingRules
-  $command.CommandText = @"
-  SELECT
-    [Id],
-    [OwnedBy],
-    [Name],
-    [Description],
-    [Active],
-    [CreatedDate],
-    [OrganizationId],
-    [Condition],
-    [ModifiedDate],
-    [CreatedBy],
-    [ModifiedBy],
-    [Order]
-  FROM [DataStore.Db.OpenCommunication].[dbo].[ProcessingRules]
-  WHERE [OrganizationId] = '${from_organization_id}'
+  if ($processRules)
+  {
+    # ProcessingRules
+    $command.CommandText = @"
+    SELECT
+      [Id],
+      [OwnedBy],
+      [Name],
+      [Description],
+      [Active],
+      [CreatedDate],
+      [OrganizationId],
+      [Condition],
+      [ModifiedDate],
+      [CreatedBy],
+      [ModifiedBy],
+      [Order]
+    FROM [DataStore.Db.OpenCommunication].[dbo].[ProcessingRules]
+    WHERE [OrganizationId] = '${from_organization_id}'
 "@
-  $result = $command.ExecuteReader()
-  $table = New-Object System.Data.DataTable
-  $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/processing-rules.json"
-
-  # ProcessingRuleRules
-  $command.CommandText = @"
-  SELECT 
-    [ProcessingRuleId],
-    [RuleId]
-  FROM
-    [DataStore.Db.OpenCommunication].[dbo].[ProcessingRuleRules]
-    INNER JOIN [DataStore.Db.OpenCommunication].[dbo].[ProcessingRules]
-      ON [DataStore.Db.OpenCommunication].[dbo].[ProcessingRuleRules].[ProcessingRuleId] = [DataStore.Db.OpenCommunication].[dbo].[ProcessingRules].[Id]
-  WHERE [OrganizationId] = '${from_organization_id}'
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/processing-rules.json"
+  
+    # ProcessingRuleRules
+    $command.CommandText = @"
+    SELECT 
+      [ProcessingRuleId],
+      [RuleId]
+    FROM
+      [DataStore.Db.OpenCommunication].[dbo].[ProcessingRuleRules]
+      INNER JOIN [DataStore.Db.OpenCommunication].[dbo].[ProcessingRules]
+        ON [DataStore.Db.OpenCommunication].[dbo].[ProcessingRuleRules].[ProcessingRuleId] = [DataStore.Db.OpenCommunication].[dbo].[ProcessingRules].[Id]
+    WHERE [OrganizationId] = '${from_organization_id}'
 "@
-  $result = $command.ExecuteReader()
-  $table = New-Object System.Data.DataTable
-  $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/processing-rule-rules.json"
-
-  # Rules
-  $command.CommandText = @"
-  SELECT
-    [Id],
-    [Name],
-    [Description],
-    [Active],
-    [CreatedDate],
-    [OrganizationId],
-    [OwnedBy],
-    [Model],
-    [ModifiedDate],
-    [CreatedBy],
-    [ModifiedBy],
-    [Order],
-    [Type]
-  FROM [DataStore.Db.OpenCommunication].[dbo].[Rules]
-  WHERE [OrganizationId] = '${from_organization_id}'
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/processing-rule-rules.json"
+  
+    # Rules
+    $command.CommandText = @"
+    SELECT
+      [Id],
+      [Name],
+      [Description],
+      [Active],
+      [CreatedDate],
+      [OrganizationId],
+      [OwnedBy],
+      [Model],
+      [ModifiedDate],
+      [CreatedBy],
+      [ModifiedBy],
+      [Order],
+      [Type]
+    FROM [DataStore.Db.OpenCommunication].[dbo].[Rules]
+    WHERE [OrganizationId] = '${from_organization_id}'
 "@
-  $result = $command.ExecuteReader()
-  $table = New-Object System.Data.DataTable
-  $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/rules.json"
-
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/rules.json"
+  }
 
   ###############################################################################
   # ENTITIES
   ###############################################################################
-
-  # EntityType
-  $command.CommandText = @"
-  SELECT
-    [Id],
-    [Type],
-    [Icon],
-    [Route],
-    [DisplayName],
-    [Active],
-    [LayoutConfiguration]
-  FROM [DataStore.Db.OpenCommunication].[dbo].[EntityType]
+  if ($processEntities)
+  {
+    # EntityType
+    $command.CommandText = @"
+    SELECT
+      [Id],
+      [Type],
+      [Icon],
+      [Route],
+      [DisplayName],
+      [Active],
+      [LayoutConfiguration]
+    FROM [DataStore.Db.OpenCommunication].[dbo].[EntityType]
 "@
-  $result = $command.ExecuteReader()
-  $table = New-Object System.Data.DataTable
-  $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/entity-type.json"
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/entity-type.json"
+  }
 
   ###############################################################################
   # DYNAMIC VOCABULARIES
   ###############################################################################
-
-  # Vocabulary
-  $command.CommandText = @"
+  if ($processDynamicVocabularies)
+  {
+    # Vocabulary
+    $command.CommandText = @"
+      SELECT
+        [OrganizationId],
+        [Key]
+      FROM [DataStore.Db.OpenCommunication].[dbo].[Vocabulary]
+      WHERE [OrganizationId] = '${from_organization_id}'
+"@
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary.json"
+  
+    # VocabularyDefinition
+    $command.CommandText = @"
     SELECT
+      [VocabularyId],
+      [VocabularyName],
+      [Grouping],
+      [KeyPrefix],
+      [KeySeparator],
+      [VocabularySource],
+      [ProviderId],
+      [IsActive],
       [OrganizationId],
-      [Key]
-    FROM [DataStore.Db.OpenCommunication].[dbo].[Vocabulary]
+      [Description],
+      [CreatedBy],
+      [CreatedAt]
+    FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyDefinition]
     WHERE [OrganizationId] = '${from_organization_id}'
 "@
-  $result = $command.ExecuteReader()
-  $table = New-Object System.Data.DataTable
-  $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary.json"
-
-  # VocabularyDefinition
-  $command.CommandText = @"
-  SELECT
-    [VocabularyId],
-    [VocabularyName],
-    [Grouping],
-    [KeyPrefix],
-    [KeySeparator],
-    [VocabularySource],
-    [ProviderId],
-    [IsActive],
-    [OrganizationId],
-    [Description],
-    [CreatedBy],
-    [CreatedAt]
-  FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyDefinition]
-  WHERE [OrganizationId] = '${from_organization_id}'
+  
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-definition.json"
+  
+    # VocabularyKeyDefinition
+    # TODO: filter by organization
+    $command.CommandText = @"
+    SELECT
+      [VocabularyKeyId],
+      [VocabularyId],
+      [GroupName],
+      [MapsToOtherKeyId],
+      [Name],
+      [DataType],
+      [DisplayName],
+      [Description],
+      [Visibility],
+      [DataAnnotationsIsPrimaryKey],
+      [DataAnnotationsIsEditable],
+      [DataAnnotationsIsNullable],
+      [DataAnnotationsIsRequired],
+      [DataAnnotationsMinimumLength],
+      [DataAnnotationsMaximumLength],
+      [IsObsolete],
+      [SortOrdinal],
+      [Hints],
+      [DataClassificationCode],
+      [IsValueChangeInsignificant],
+      [IsActive],
+      [CompositeVocabularyId],
+      [KeyType],
+      [CreatedBy],
+      [CreatedAt]
+    FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyKeyDefinition]
 "@
-
-  $result = $command.ExecuteReader()
-  $table = New-Object System.Data.DataTable
-  $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-definition.json"
-
-  # VocabularyKeyDefinition
-  # TODO: filter by organization
-  $command.CommandText = @"
-  SELECT
-    [VocabularyKeyId],
-    [VocabularyId],
-    [GroupName],
-    [MapsToOtherKeyId],
-    [Name],
-    [DataType],
-    [DisplayName],
-    [Description],
-    [Visibility],
-    [DataAnnotationsIsPrimaryKey],
-    [DataAnnotationsIsEditable],
-    [DataAnnotationsIsNullable],
-    [DataAnnotationsIsRequired],
-    [DataAnnotationsMinimumLength],
-    [DataAnnotationsMaximumLength],
-    [IsObsolete],
-    [SortOrdinal],
-    [Hints],
-    [DataClassificationCode],
-    [IsValueChangeInsignificant],
-    [IsActive],
-    [CompositeVocabularyId],
-    [KeyType],
-    [CreatedBy],
-    [CreatedAt]
-  FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyKeyDefinition]
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-key-definition.json"
+  
+    # VocabularyKeyGroupDefinition
+    # TODO: filter by organization
+    $command.CommandText = @"
+    SELECT
+      [VocabularyKeyGroupId],
+      [VocabularyId],
+      [Name],
+      [SortOrdinal]
+    FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyKeyGroupDefinition]
 "@
-  $result = $command.ExecuteReader()
-  $table = New-Object System.Data.DataTable
-  $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-key-definition.json"
-
-  # VocabularyKeyGroupDefinition
-  # TODO: filter by organization
-  $command.CommandText = @"
-  SELECT
-    [VocabularyKeyGroupId],
-    [VocabularyId],
-    [Name],
-    [SortOrdinal]
-  FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyKeyGroupDefinition]
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-key-group-definition.json"
+  
+    # VocabularyOwner
+    # TODO: filter by organization
+    $command.CommandText = @"
+    SELECT
+      [VocabularyOwnerId],
+      [OwnerId],
+      [VocabularyId]
+    FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyOwner]
 "@
-  $result = $command.ExecuteReader()
-  $table = New-Object System.Data.DataTable
-  $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-key-group-definition.json"
-
-  # VocabularyOwner
-  # TODO: filter by organization
-  $command.CommandText = @"
-  SELECT
-    [VocabularyOwnerId],
-    [OwnerId],
-    [VocabularyId]
-  FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyOwner]
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-owner.json"
+  
+    # VocabularyValue
+    $command.CommandText = @"
+    SELECT
+      [Id],
+      [Value],
+      [KeyId],
+      [Allowed],
+      [ValueRule]
+    FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyValue]
 "@
-  $result = $command.ExecuteReader()
-  $table = New-Object System.Data.DataTable
-  $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-owner.json"
-
-  # VocabularyValue
-  $command.CommandText = @"
-  SELECT
-    [Id],
-    [Value],
-    [KeyId],
-    [Allowed],
-    [ValueRule]
-  FROM [DataStore.Db.OpenCommunication].[dbo].[VocabularyValue]
-"@
-  $result = $command.ExecuteReader()
-  $table = New-Object System.Data.DataTable
-  $table.Load($result)
-  $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-value.json"
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-value.json"
+  }
 
   ###############################################################################
   # TODO: STREAMS, EXPORT TARGETS
