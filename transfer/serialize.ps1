@@ -269,6 +269,101 @@ function serialize($config)
   }
 
   ###############################################################################
+  # TODO: Annotations / Mappings
+  ###############################################################################
+
+# TODO: we will need clientId - that is the org id converted back to it's name
+# perhaps we should work this out earlier and store it in the $config object?
+
+  # SELECT TOP (1000) [id]
+  #     ,[clientId]
+  #     ,[name]
+  #     ,[entityType]
+  #     ,[author]
+  #     ,[editors]
+  #     ,[nameKey]
+  #     ,[descriptionKey]
+  #     ,[originEntityCodeKey]
+  #     ,[versionKey]
+  #     ,[cultureKey]
+  #     ,[origin]
+  #     ,[createdDateMap]
+  #     ,[modifiedDateMap]
+  #     ,[vocabularyId]
+  #     ,[createdAt]
+  #     ,[updatedAt]
+  #     ,[isDynamicVocab]
+  # FROM [DataStore.Db.MicroServices].[dbo].[annotations]
+
+#   SELECT TOP (1000) [annotationId]
+#   ,[key]
+#   ,[vocabKey]
+#   ,[coreVocab]
+#   ,[displayName]
+#   ,[useAsEntityCode]
+#   ,[entityCodeOrigin]
+#   ,[useAsAlias]
+#   ,[type]
+#   ,[edges]
+#   ,[validations]
+#   ,[transformations]
+#   ,[vocabularyKeyId]
+# FROM [DataStore.Db.MicroServices].[dbo].[annotationProperties]
+
+# SELECT TOP (1000) [originalField]
+#       ,[dataSetId]
+#       ,[key]
+#       ,[edges]
+#   FROM [DataStore.Db.MicroServices].[dbo].[DataSetAnnotationMappings]
+
+  ###############################################################################
+  # TODO: Source Definitions
+  ###############################################################################
+
+  # TODO: filter by type = file and client = 'cluedin' or the org name?
+#   SELECT TOP (1000) [id]
+#   ,[name]
+#   ,[clientId]
+#   ,[originalFields]
+#   ,[originalContent]
+#   ,[annotationId]
+#   ,[type]
+#   ,[author]
+#   ,[stats]
+#   ,[configuration]
+#   ,[noSubmissions]
+#   ,[hasError]
+#   ,[errorType]
+#   ,[latestErrorMessage]
+#   ,[createdAt]
+#   ,[updatedAt]
+#   ,[dataSourceId]
+#   ,[expectedTotal]
+# FROM [DataStore.Db.MicroServices].[dbo].[DataSets]
+
+# TODO: do NOT import these... but we need to have provisions in the related tables...
+# SELECT TOP (1000) [id]
+#       ,[processing]
+#       ,[mimeType]
+#       ,[size]
+#       ,[fileName]
+#       ,[filePath]
+#       ,[md5]
+#       ,[originalContent]
+#   FROM [DataStore.Db.MicroServices].[dbo].[DataSourceFiles]
+# likewise with FROM [DataStore.Db.MicroServices].[dbo].[DataSources]
+
+# these are the source set groups
+# SELECT TOP (1000) [id]
+#       ,[name]
+#       ,[clientId]
+#       ,[author]
+#       ,[editors]
+#       ,[createdAt]
+#       ,[updatedAt]
+#   FROM [DataStore.Db.MicroServices].[dbo].[DataSourceSets]
+
+  ###############################################################################
   # TODO: STREAMS, EXPORT TARGETS
   ###############################################################################
 
