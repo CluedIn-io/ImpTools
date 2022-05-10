@@ -30,6 +30,7 @@ To assist with unit tests and advanced scenarios, other environment varibles and
 | `config.json` "process_rules" | if process_filter true then set to true to enable rules to be processed |
 | `config.json` "process_entities" | same as process_rules but for entities |
 | `config.json` "process_dynamic_vocabularies" | same as process_rules but for dynamic vocabularies |
+| `config.json` "process_annotations" | same as process_rules but for annotations |
 
 ## Serialization
 

@@ -99,15 +99,26 @@ function GetOrgs()
     return $out
 }
 
-# always suggest we use the first org defined
+# use 'cluedin' if found, or the first one, otherwise if there is only one result return it
 function OrgIdToUse()
 {
     $ret = ""
     $orgs = GetOrgs
+    #Write-Host orgs are $orgs
     $orgsArray = $orgs | ConvertFrom-Json
-    if ($orgsArray.Length -gt 0)
+    if ($orgsArray.Length -eq 0)
     {
         $ret = $orgsArray[0].Id
+    }
+    elseif ($orgsArray.Length -gt 0)
+    {
+        $ret = $orgsArray[0].Id
+        $orgsArray | foreach {
+            if ($_.OrganizationName -eq 'cluedin')
+            {
+                $ret = $_.Id
+            }
+        }
     }
     else
     {

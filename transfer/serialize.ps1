@@ -23,9 +23,31 @@ function serialize($config)
 
   $from_organization_id = $config.from_organization_id
 
+  $command.CommandText = @"
+  SELECT
+      [Id]
+      ,[OrganizationName]
+  FROM [DataStore.Db.OpenCommunication].[dbo].[OrganizationProfile]
+  WHERE [Id] = '${from_organization_id}'
+"@
+  $result = $command.ExecuteReader()
+  $table = New-Object System.Data.DataTable
+  $table.Load($result)
+  if ($table.Rows.Count -gt 0)
+  {
+    $from_organization = $table.Rows[0][1]
+    #Write-Host from_organization is $from_organization
+  }
+  else
+  {
+    Write-Host error: Id lookup failed for ${from_organization_id}
+    exit -1;
+  }
+
   $process_rules = $true
   $process_entities = $true
   $process_dynamic_vocabularies = $true
+  $process_annotations = $true
 
   if (
       ([bool](Get-member -Name "process_filter" -InputObject $config -MemberType Properties)) -and
@@ -50,6 +72,10 @@ function serialize($config)
      $process_dynamic_vocabularies = (
       ([bool](Get-member -Name "process_dynamic_vocabularies" -InputObject $config -MemberType Properties)) -and
       ($config.process_dynamic_vocabularies)
+     )
+     $process_annotations = (
+      ([bool](Get-member -Name "process_annotations" -InputObject $config -MemberType Properties)) -and
+      ($config.process_annotations)
      )
   }
 
@@ -272,43 +298,63 @@ function serialize($config)
   # TODO: Annotations / Mappings
   ###############################################################################
 
-# TODO: we will need clientId - that is the org id converted back to it's name
-# perhaps we should work this out earlier and store it in the $config object?
+  # TODO: we will need clientId - that is the org id converted back to it's name
+  # perhaps we should work this out earlier and store it in the $config object?
 
-  # SELECT TOP (1000) [id]
-  #     ,[clientId]
-  #     ,[name]
-  #     ,[entityType]
-  #     ,[author]
-  #     ,[editors]
-  #     ,[nameKey]
-  #     ,[descriptionKey]
-  #     ,[originEntityCodeKey]
-  #     ,[versionKey]
-  #     ,[cultureKey]
-  #     ,[origin]
-  #     ,[createdDateMap]
-  #     ,[modifiedDateMap]
-  #     ,[vocabularyId]
-  #     ,[createdAt]
-  #     ,[updatedAt]
-  #     ,[isDynamicVocab]
-  # FROM [DataStore.Db.MicroServices].[dbo].[annotations]
+  if ($process_annotations)
+  {
+    $command.CommandText = @"
+    SELECT
+      [id]
+      ,[clientId]
+      ,[name]
+      ,[entityType]
+      ,[author]
+      ,[editors]
+      ,[nameKey]
+      ,[descriptionKey]
+      ,[originEntityCodeKey]
+      ,[versionKey]
+      ,[cultureKey]
+      ,[origin]
+      ,[createdDateMap]
+      ,[modifiedDateMap]
+      ,[vocabularyId]
+      ,[createdAt]
+      ,[updatedAt]
+      ,[isDynamicVocab]
+    FROM [DataStore.Db.MicroServices].[dbo].[annotations]
+    WHERE [clientId] = '${from_organization}'
+"@
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/annotations.json"
 
-#   SELECT TOP (1000) [annotationId]
-#   ,[key]
-#   ,[vocabKey]
-#   ,[coreVocab]
-#   ,[displayName]
-#   ,[useAsEntityCode]
-#   ,[entityCodeOrigin]
-#   ,[useAsAlias]
-#   ,[type]
-#   ,[edges]
-#   ,[validations]
-#   ,[transformations]
-#   ,[vocabularyKeyId]
-# FROM [DataStore.Db.MicroServices].[dbo].[annotationProperties]
+    # hmmm, do we filter out such that we only have annotations where we matched the above WHERE cause?
+    # TODO: consider filtering this table if required
+    $command.CommandText = @"
+    SELECT 
+      [annotationId]
+      ,[key]
+      ,[vocabKey]
+      ,[coreVocab]
+      ,[displayName]
+      ,[useAsEntityCode]
+      ,[entityCodeOrigin]
+      ,[useAsAlias]
+      ,[type]
+      ,[edges]
+      ,[validations]
+      ,[transformations]
+      ,[vocabularyKeyId]
+    FROM [DataStore.Db.MicroServices].[dbo].[annotationProperties]
+"@
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/annotation-properties.json"
+  }
 
 # SELECT TOP (1000) [originalField]
 #       ,[dataSetId]
