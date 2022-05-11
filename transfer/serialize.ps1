@@ -48,6 +48,8 @@ function serialize($config)
   $process_entities = $true
   $process_dynamic_vocabularies = $true
   $process_annotations = $true
+  $process_mappings = $true;
+  $process_datasets = $true;
 
   if (
       ([bool](Get-member -Name "process_filter" -InputObject $config -MemberType Properties)) -and
@@ -58,6 +60,9 @@ function serialize($config)
     $process_rules = $false
     $process_entities = $false
     $process_dynamic_vocabularies = $false
+    $process_annotations = $false
+    $process_mappings = $false
+    $process_datasets = $false
 
     #Write-Host *** process_filter is on ***    
 
@@ -76,6 +81,14 @@ function serialize($config)
      $process_annotations = (
       ([bool](Get-member -Name "process_annotations" -InputObject $config -MemberType Properties)) -and
       ($config.process_annotations)
+     )
+     $process_mappings = (
+      ([bool](Get-member -Name "process_mappings" -InputObject $config -MemberType Properties)) -and
+      ($config.process_mappings)
+     )
+     $process_datasets = (
+      ([bool](Get-member -Name "process_datasets" -InputObject $config -MemberType Properties)) -and
+      ($config.process_datasets)
      )
   }
 
@@ -295,12 +308,8 @@ function serialize($config)
   }
 
   ###############################################################################
-  # TODO: Annotations / Mappings
+  # Annotations / Mappings
   ###############################################################################
-
-  # TODO: we will need clientId - that is the org id converted back to it's name
-  # perhaps we should work this out earlier and store it in the $config object?
-
   if ($process_annotations)
   {
     $command.CommandText = @"
@@ -332,7 +341,7 @@ function serialize($config)
     $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/annotations.json"
 
     # hmmm, do we filter out such that we only have annotations where we matched the above WHERE cause?
-    # TODO: consider filtering this table if required
+    # TODO: consider filtering on annotationId if required
     $command.CommandText = @"
     SELECT 
       [annotationId]
@@ -356,36 +365,74 @@ function serialize($config)
     $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/annotation-properties.json"
   }
 
-# SELECT TOP (1000) [originalField]
-#       ,[dataSetId]
-#       ,[key]
-#       ,[edges]
-#   FROM [DataStore.Db.MicroServices].[dbo].[DataSetAnnotationMappings]
+  if ($process_mappings)
+  {
+    $command.CommandText = @"
+    SELECT
+      [originalField]
+      ,[dataSetId]
+      ,[key]
+      ,[edges]
+    FROM [DataStore.Db.MicroServices].[dbo].[DataSetAnnotationMappings]
+"@
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/dataset-annotation-mappings.json"
+  }
 
   ###############################################################################
-  # TODO: Source Definitions
+  # Data Sets and Source Definitions
   ###############################################################################
+  if ($process_datasets)
+  {
+    # TODO: filter by type = file?
+    $command.CommandText = @"
+    SELECT
+      [id]
+      ,[name]
+      ,[clientId]
+      ,[originalFields]
+      ,[originalContent]
+      ,[annotationId]
+      ,[type]
+      ,[author]
+      ,[stats]
+      ,[configuration]
+      ,[noSubmissions]
+      ,[hasError]
+      ,[errorType]
+      ,[latestErrorMessage]
+      ,[createdAt]
+      ,[updatedAt]
+      ,[dataSourceId]
+      ,[expectedTotal]
+    FROM [DataStore.Db.MicroServices].[dbo].[DataSets]
+    WHERE [clientId] = '${from_organization}'
+"@
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/datasets.json"
 
-  # TODO: filter by type = file and client = 'cluedin' or the org name?
-#   SELECT TOP (1000) [id]
-#   ,[name]
-#   ,[clientId]
-#   ,[originalFields]
-#   ,[originalContent]
-#   ,[annotationId]
-#   ,[type]
-#   ,[author]
-#   ,[stats]
-#   ,[configuration]
-#   ,[noSubmissions]
-#   ,[hasError]
-#   ,[errorType]
-#   ,[latestErrorMessage]
-#   ,[createdAt]
-#   ,[updatedAt]
-#   ,[dataSourceId]
-#   ,[expectedTotal]
-# FROM [DataStore.Db.MicroServices].[dbo].[DataSets]
+    # these are the source set groups
+    $command.CommandText = @"
+    SELECT
+      [id]
+      ,[name]
+      ,[clientId]
+      ,[author]
+      ,[editors]
+      ,[createdAt]
+      ,[updatedAt]
+    FROM [DataStore.Db.MicroServices].[dbo].[DataSourceSets]    
+    WHERE [clientId] = '${from_organization}'
+"@
+    $result = $command.ExecuteReader()
+    $table = New-Object System.Data.DataTable
+    $table.Load($result)
+    $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/datasourcesets.json"
+  }
 
 # TODO: do NOT import these... but we need to have provisions in the related tables...
 # SELECT TOP (1000) [id]
@@ -398,16 +445,6 @@ function serialize($config)
 #       ,[originalContent]
 #   FROM [DataStore.Db.MicroServices].[dbo].[DataSourceFiles]
 # likewise with FROM [DataStore.Db.MicroServices].[dbo].[DataSources]
-
-# these are the source set groups
-# SELECT TOP (1000) [id]
-#       ,[name]
-#       ,[clientId]
-#       ,[author]
-#       ,[editors]
-#       ,[createdAt]
-#       ,[updatedAt]
-#   FROM [DataStore.Db.MicroServices].[dbo].[DataSourceSets]
 
   ###############################################################################
   # TODO: STREAMS, EXPORT TARGETS

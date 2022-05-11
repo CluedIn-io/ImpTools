@@ -31,6 +31,7 @@ To assist with unit tests and advanced scenarios, other environment varibles and
 | `config.json` "process_entities" | same as process_rules but for entities |
 | `config.json` "process_dynamic_vocabularies" | same as process_rules but for dynamic vocabularies |
 | `config.json` "process_annotations" | same as process_rules but for annotations |
+| `config.json` "process_datasets" | same as process_rules but for datasets |
 
 ## Serialization
 
