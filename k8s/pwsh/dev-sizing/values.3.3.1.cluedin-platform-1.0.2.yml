@@ -1,0 +1,186 @@
+# for k3.cluedin.me
+# we want a small instance
+
+global:
+  image:
+    tag: "3.3.1"
+    pullPolicy: "IfNotPresent"
+  ingress:
+    forceHttps: true
+    annotations:
+      ingress.kubernetes.io/ssl-redirect: "true"
+    tls:
+      secretName: "ingress-cert-secret"
+  dns:
+    hostname: "k3.cluedin.me"
+
+#platform:
+# we could define docker-registry-key here if need be
+# my cluster already has this defined
+
+application:
+  bootstrap:
+    organization:
+      name: cluedin
+      email: admin@cluedin.com
+      password: "<redacted>"
+
+  cluedin:
+    components:
+      packages:
+        # checking cluedin public feed there is nothing newer as of 28 Apr 2022
+        - name: CluedIn.Connector.SqlServer
+          version: 3.3.0-*
+    roles:
+      main:
+        extraConfiguration:
+          # remove most restrictions around org names (e.g. "cluedin")
+          CLUEDIN_appSettings__ReservedOrganizationIds: "none"
+          # e.g. disable Fuzzy Entity Matching
+          #CLUEDIN_APPSETTINGS__CLUEPROCESSING_FUZZYENTITYMATCHING_ENABLED: "false"
+        count: 1
+        resources:
+          limits:
+            cpu: "2"
+            memory: "10Gi"
+          requests:
+            cpu: "1.5"
+            memory: "4Gi"
+      processing:
+        count: 1
+        resources:
+          limits:
+            cpu: "1"
+            memory: "4Gi"
+          requests:
+            cpu: "1"
+            memory: "4Gi"
+      crawling:
+        count: 0
+        resources:
+          limits:
+            cpu: "2"
+            memory: "12Gi"
+          requests:
+            cpu: "2"
+            memory: "8Gi"
+
+  webapi:
+    resources:
+      limits:
+        cpu: "0.5"
+        memory: "512Mi"
+      requests:
+        cpu: "0.25"
+        memory: "256Mi"
+
+  # note: this used to be called clean in 3.2.5 and below
+  prepare:
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 128Mi
+
+  datasource:
+    resources:
+      limits:
+        cpu: 1
+        memory: 4Gi
+      requests:
+        cpu: 125m
+        memory: 2Gi
+
+  submitter:
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 1000m
+        memory: 1Gi
+
+  gql:
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 200m
+        memory: 64Mi
+
+  ui:
+    resources:
+      limits:
+        cpu: 750m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+
+ 
+infrastructure:
+  elasticsearch:
+    resources:
+      limits:
+        cpu: 2
+        memory: 4Gi
+    volumeClaimTemplate:
+      resources:
+        requests:
+          storage: "4Gi"
+
+  neo4j:
+    # try no pinning since the issue with pinning to 3.5.31 should be
+    # now addressed by the latest charts
+    resources:
+      limits:
+        cpu: "2"
+        memory: "4Gi"
+      requests:
+        cpu: "2"
+        memory: "4Gi"
+    core:
+      persistentVolume:
+        size: "8Gi"
+
+  # note: some of these used to be in sqlserver
+  mssql:
+    resources:
+      limits:
+        cpu: "2"
+        memory: "4Gi"
+      requests:
+        cpu: "2"
+        memory: "4Gi"
+    persistence:
+      dataSize: "8Gi"
+      transactionLogSize: "8Gi"
+      backupSize: "8Gi"
+      masterSize: "8Gi"
+
+  redis:
+    master:
+      resources:
+        limits:
+          cpu: "1"
+          memory: "512Mi"
+        requests:
+          cpu: "0.1"
+          memory: "128Mi"
+      persistence:
+        size: "512Mi"
+
+  rabbitmq:
+    resources:
+      limits:
+        cpu: "2"
+        memory: "4Gi"
+      requests:
+        cpu: "1"
+        memory: "4Gi"
+    persistence:
+      size: "4Gi"
+ 
