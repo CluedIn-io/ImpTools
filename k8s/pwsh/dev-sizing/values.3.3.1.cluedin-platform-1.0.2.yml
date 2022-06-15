@@ -24,6 +24,7 @@ application:
       name: cluedin
       email: admin@cluedin.com
       password: "<redacted>"
+  environment: "Development"    # Environment (e.g Production or Development)
 
   cluedin:
     components:
