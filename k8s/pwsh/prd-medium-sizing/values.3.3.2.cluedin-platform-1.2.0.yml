@@ -1,0 +1,228 @@
+# based on https://github.com/CluedIn-io/ImpTools/blob/master/k8s/pwsh/prd-medium-sizing/values.3.3.0.cluedin-platform-1.0.0.yml
+# rha@cluedin.com Jun 2022
+
+global:
+  image:
+    tag: "3.3.2"
+    pullPolicy: "IfNotPresent"
+  ingress:
+    forceHttps: true
+    annotations:
+      ingress.kubernetes.io/ssl-redirect: "true"
+    tls:
+      secretName: "ingress-cert-secret"
+  dns:
+    hostname: "k1.cluedin.me"
+
+#platform:
+# we could define docker-registry-key here if need be
+# my cluster already has this defined
+
+application:
+  bootstrap:
+    organization:
+      name: cluedin
+      email: admin@cluedin.com
+      password: "<redacted>"
+  environment: "Production"    # Environment (e.g Production or Development)
+
+  cluedin:
+    components:
+      packages:
+        - name: CluedIn.Connector.SqlServer
+          version: 3.3.0-*
+        # - name: CluedIn.ExamplePrivateNuget
+      sources:
+        apac_private:
+          url: https://pkgs.dev.azure.com/CluedIn-io/_packaging/ExamplePrivateNugetSource/nuget/v3/index.json
+          user: VSTS
+          pass: <redacted>
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: process
+    roles:
+      main:
+        extraConfiguration:
+          # remove most restrictions around org names (e.g. "cluedin")
+          CLUEDIN_appSettings__ReservedOrganizationIds: "none"
+          # disable Fuzzy Entity Matching
+          CLUEDIN_APPSETTINGS__CLUEPROCESSING_FUZZYENTITYMATCHING_ENABLED: "false"
+        count: 1
+        resources:
+          limits:
+            cpu: "2"
+            memory: "10Gi"
+          requests:
+            cpu: "1.5"
+            memory: "4Gi"
+      processing:
+        count: 1
+        resources:
+          limits:
+            cpu: "4"
+            memory: "8Gi"
+          requests:
+            cpu: "4"
+            memory: "4Gi"
+      crawling:
+        count: 0
+        resources:
+          limits:
+            cpu: "2"
+            memory: "12Gi"
+          requests:
+            cpu: "2"
+            memory: "8Gi"
+
+  webapi:
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: general
+    resources:
+      limits:
+        cpu: "0.5"
+        memory: "512Mi"
+      requests:
+        cpu: "0.25"
+        memory: "256Mi"
+
+  # note: this used to be called clean in 3.2.5 and below
+  prepare:
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: core
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 128Mi
+
+  annotations:
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: general
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1000Mi
+      requests:
+        cpu: 512m
+        memory: 512Mi
+
+  datasource:
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: process
+    resources:
+      limits:
+        cpu: 1
+        memory: 4Gi
+      requests:
+        cpu: 125m
+        memory: 2Gi
+
+  submitter:
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: general
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 1000m
+        memory: 1Gi
+
+  gql:
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: general
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 200m
+        memory: 64Mi
+
+  ui:
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: general
+    resources:
+      limits:
+        cpu: 750m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+ 
+infrastructure:
+  elasticsearch:
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: data
+    resources:
+      limits:
+        cpu: 5
+        memory: 8Gi
+    volumeClaimTemplate:
+      resources:
+        requests:
+          storage: "4Gi"
+
+  neo4j:
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: data
+    resources:
+      limits:
+        cpu: "7"
+        memory: "8Gi"
+      requests:
+        cpu: "7"
+        memory: "8Gi"
+    core:
+      persistentVolume:
+        size: "8Gi"
+
+  # note: some of these used to be in sqlserver
+  mssql:
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: data
+    resources:
+      limits:
+        cpu: "3"
+        memory: "8Gi"
+      requests:
+        cpu: "3"
+        memory: "8Gi"
+    persistence:
+      dataSize: "8Gi"
+      transactionLogSize: "8Gi"
+      backupSize: "8Gi"
+      masterSize: "8Gi"
+
+  redis:
+    master:
+      nodeSelector:
+        kubernetes.cluedin.com/pooltype: general
+      resources:
+        limits:
+          cpu: "1"
+          memory: "512Mi"
+        requests:
+          cpu: "0.1"
+          memory: "128Mi"
+      persistence:
+        size: "512Mi"
+
+  rabbitmq:
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: process
+    resources:
+      limits:
+        cpu: "2"
+        memory: "4Gi"
+      requests:
+        cpu: "1"
+        memory: "4Gi"
+    persistence:
+      size: "4Gi"
+
+  openrefine:
+    nodeSelector:
+      kubernetes.cluedin.com/pooltype: core
+ 
