@@ -13,6 +13,7 @@ global:
       secretName: "ingress-cert-secret"
   dns:
     hostname: "k1.cluedin.me"
+  environment: "Production"    # Environment (e.g Production or Development)
 
 #platform:
 # we could define docker-registry-key here if need be
@@ -24,7 +25,6 @@ application:
       name: cluedin
       email: admin@cluedin.com
       password: "<redacted>"
-  environment: "Production"    # Environment (e.g Production or Development)
 
   cluedin:
     components:
