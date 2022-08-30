@@ -227,7 +227,7 @@ function serialize($config)
     $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-definition.json"
   
     # VocabularyKeyDefinition
-    # TODO: filter by organization
+    # TODO: filter by organization - how?
     $command.CommandText = @"
     SELECT
       [VocabularyKeyId],
@@ -263,7 +263,7 @@ function serialize($config)
     $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-key-definition.json"
   
     # VocabularyKeyGroupDefinition
-    # TODO: filter by organization
+    # TODO: filter by organization - how?
     $command.CommandText = @"
     SELECT
       [VocabularyKeyGroupId],
@@ -278,7 +278,7 @@ function serialize($config)
     $table | Select-Object $table.Columns.ColumnName | ConvertTo-Json -AsArray | Out-File "$outdir/vocabulary-key-group-definition.json"
   
     # VocabularyOwner
-    # TODO: filter by organization
+    # TODO: filter by organization - how?
     $command.CommandText = @"
     SELECT
       [VocabularyOwnerId],
