@@ -2,8 +2,6 @@
 
 Typically when I setup a new cluster, I create a new folder for it and then copy the current scripts in this folder to there. Next I update the `login.ps1` script accordlying and use that to ensure that I'm always in the correct context.
 
-note: scripts assume you already have your current context namespace set to cluedin - run [set_ns_to_cluedin.ps1](set_ns_to_cluedin.ps1) to do just that.
-
 Rudi: The intent of this folder is to store common CluedIn specific kubectl and the like commands as used by the implementation team. Please feel free to add yours.
 
 Please turn it into an example .ps1 file and feel free to commit to the above... bonus points for putting some comments in the script 😉
@@ -15,7 +13,7 @@ These examples have been selected on the basis of common usage.
 | Script | Description |
 | --- | --- |
 |login.ps1| Example script for changing our context to the cluster of interest and ensuring we are in the right context|
-|set_ns_to_cluedin.ps1 | Set the current context to the cluedin namespace - means you don't need to put `-n cluedin` on all your `kubectl` commands |
+|set_ns_to_cluedin.ps1 | No longer requried as I have added "-n cluedin" to everything pretty much - Set the current context to the cluedin namespace - means you don't need to put `-n cluedin` on all your `kubectl` commands |
 |gp.ps1| shortcut for `kubectl get pods`|
 |get_config_map.ps1| contains examples of useful config map commands |
 |helm_upgrade-3.3.0.ps1| helm upgrade/install command for 3.3 GA |
@@ -56,44 +54,55 @@ Non-authoritative answer:
 Name:    k1.cluedin.me
 Address:  20.193.9.158
 
-# set our namespace to default to cluedin
-PS > .\set_ns_to_cluedin.ps1
-Context "APAC-demo-k8s" modified.
-
 # get all pods (in the cluedin namespace)
 PS > .\gp.ps1
 NAME                                               READY   STATUS    RESTARTS   AGE
-alertmanager-cluedin-alertmanager-0                2/2     Running   0          27h
-cluedin-annotation-85576b49bb-jf6bb                1/1     Running   0          27h
-cluedin-cert-manager-6555bff977-96hwk              1/1     Running   0          27h
-cluedin-cert-manager-cainjector-556ddb47d6-8tq77   1/1     Running   0          27h
-cluedin-cert-manager-webhook-59ddc48fbf-h7tqs      1/1     Running   0          27h
-cluedin-controller-5c95967ff4-pj8sh                1/1     Running   0          27h
-cluedin-datasource-7644786b48-vbft7                1/1     Running   2          27h
-cluedin-elasticsearch-0                            1/1     Running   0          27h
-cluedin-gql-5fc4f5d858-gfv8t                       1/1     Running   0          27h
-cluedin-grafana-7b45668d44-bmxxk                   2/2     Running   0          27h
-cluedin-haproxy-ingress-dddfc9cf9-bdrk6            1/1     Running   0          27h
-cluedin-kube-state-metrics-659ffc4664-lflqd        1/1     Running   0          27h
-cluedin-neo4j-core-0                               1/1     Running   0          27h
-cluedin-openrefine-55f89987ff-xg69k                1/1     Running   0          27h
-cluedin-operator-998bcdf49-z24fb                   1/1     Running   0          27h
-cluedin-prepare-58f6b9696b-dnxv9                   1/1     Running   2          27h
-cluedin-prometheus-node-exporter-4cpcm             1/1     Running   0          27h
-cluedin-prometheus-node-exporter-5trqc             1/1     Running   0          27h
-cluedin-prometheus-node-exporter-7bhdq             1/1     Running   0          27h
-cluedin-prometheus-node-exporter-8kdtd             1/1     Running   0          27h
-cluedin-prometheus-node-exporter-x9mtc             1/1     Running   0          27h
-cluedin-prometheus-node-exporter-zlv76             1/1     Running   0          27h
-cluedin-rabbitmq-0                                 1/1     Running   0          27h
-cluedin-redis-master-0                             2/2     Running   0          27h
-cluedin-server-5b8989bcd5-2t954                    1/1     Running   0          27h
-cluedin-server-processing-f9bd4695f-szcvq          1/1     Running   0          27h
-cluedin-sqlserver-64ff77dd95-cgslq                 1/1     Running   0          27h
-cluedin-submitter-644fc8bdf8-gppz6                 1/1     Running   0          27h
-cluedin-ui-c969d466c-797g9                         1/1     Running   0          27h
-cluedin-webapi-69f8b8dc8f-8xfkr                    1/1     Running   0          27h
-prometheus-cluedin-prometheus-0                    2/2     Running   0          27h
+alertmanager-cluedin-alertmanager-0               2/2     Running     0          30m
+cluedin-annotation-6f68df4bdc-nvnfl               1/1     Running     0          20m
+cluedin-cert-manager-57c5cf77d7-55tkw             1/1     Running     0          20m
+cluedin-cert-manager-cainjector-d85487df8-sf25s   1/1     Running     0          20m
+cluedin-cert-manager-webhook-85fc5f746c-x4sjp     1/1     Running     0          20m
+cluedin-controller-755f7c89b4-fpcqs               1/1     Running     0          20m
+cluedin-datasource-5bbc477556-prt65               1/1     Running     0          20m
+cluedin-elasticsearch-0                           1/1     Running     0          30m
+cluedin-gql-c7c8c8476-scvnr                       1/1     Running     0          20m
+cluedin-grafana-666d57888d-f228f                  3/3     Running     0          20m
+cluedin-haproxy-ingress-69589b754b-d7lrw          1/1     Running     0          20m
+cluedin-kube-state-metrics-57799978fc-4llzx       1/1     Running     0          20m
+cluedin-libpostal-554855d787-ns6sh                1/1     Running     0          20m
+cluedin-neo4j-core-0                              1/1     Running     0          30m
+cluedin-openrefine-684f4864db-bkg22               1/1     Running     0          20m
+cluedin-operator-f7b8c8bb-r27wx                   1/1     Running     0          20m
+cluedin-prepare-dd55bbdf9-f4b69                   1/1     Running     0          20m
+cluedin-prometheus-node-exporter-5457p            1/1     Running     0          3d21h
+cluedin-prometheus-node-exporter-5b9hp            1/1     Running     0          21d
+cluedin-prometheus-node-exporter-fgfp9            1/1     Running     0          21d
+cluedin-prometheus-node-exporter-jhxgv            1/1     Running     0          21d
+cluedin-prometheus-node-exporter-kjjr7            1/1     Running     0          21d
+cluedin-prometheus-node-exporter-m52pm            1/1     Running     0          3d21h
+cluedin-prometheus-node-exporter-sxgxg            1/1     Running     0          21d
+cluedin-prometheus-node-exporter-t6vc4            1/1     Running     0          21d
+cluedin-rabbitmq-0                                1/1     Running     0          30m
+cluedin-redis-master-0                            2/2     Running     0          30m
+cluedin-server-74fddf54c9-56tsw                   1/1     Running     0          20m
+cluedin-server-crawling-748cdc5767-4wpl5          1/1     Running     0          20m
+cluedin-server-processing-659dcb95c6-8dttk        1/1     Running     0          20m
+cluedin-sqlserver-c96dcbc8d-vg4qh                 1/1     Running     0          20m
+cluedin-submitter-d7cdc495-jfnsz                  1/1     Running     0          20m
+cluedin-ui-5c7f86dddf-fc2kq                       1/1     Running     0          20m
+cluedin-webapi-7fd6d479f7-srxpt                   1/1     Running     0          20m
+init-cluedin-job-rl74l                            0/1     Completed   0          21d
+init-neo4j-job-g65wb                              0/1     Completed   0          21d
+init-sqlserver-job-kmdfk                          0/1     Completed   0          21d
+prometheus-cluedin-prometheus-0                   2/2     Running     0          30m
+
+# if after running gp.ps1 there not enough pods running then start up the cluster
+PS > .\startup_scale_up_cluster_00.ps1
+# poll gp till all running before running next startup 01
+PS > .\gp.ps1
+PS > .\startup_scale_up_cluster_01.ps1
+# poll gp till all running
+PS > .\gp.ps1
 
 # port forward so you can connect to http://localhost:15672/ to connect to rabbitmq admin web portal
 # typically you run this in it's own window since it blocks the terminal
