@@ -3,8 +3,8 @@ Handy Implementation Tools/Scripts and Journals
 
 ## PDF Journals
 These are journals that either demonstrate an
-- [example](examples), or are
-- part of a [troubleshooting](troubleshooting)
+- [example](examples/), or are
+- part of a [troubleshooting](troubleshooting/)
 process
 
 ## Kubernetes Scripts

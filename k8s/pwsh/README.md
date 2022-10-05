@@ -16,9 +16,8 @@ These examples have been selected on the basis of common usage.
 |set_ns_to_cluedin.ps1 | No longer requried as I have added "-n cluedin" to everything pretty much - Set the current context to the cluedin namespace - means you don't need to put `-n cluedin` on all your `kubectl` commands |
 |gp.ps1| shortcut for `kubectl get pods`|
 |get_config_map.ps1| contains examples of useful config map commands |
-|helm_upgrade-3.3.0.ps1| helm upgrade/install command for 3.3 GA |
-|helm_upgrade.ps1| helm upgrade/install command for previous release (3.2.5 GA) |
-|install_haproxy-ingress.ps1| 3.2.5 haproxy install command |
+|helm_upgrade-*.ps1| helm upgrade/install command for version * |
+|install_haproxy-ingress.ps1| (old) manual haproxy install command |
 |pf_es.ps1| port forward elasticsearch to localhost |
 |pf_hangfire.ps1| port forward to access the hangfire scheduler in the processing pod - access by http://localhost:9003/hangfire |
 |pf_neo4j.ps1| port forward Neo4j 7474 to localhost |
@@ -123,3 +122,6 @@ https://github.com/shanoor/kubectl-aliases-powershell
 "This repository contains a script to generate hundreds of convenient kubectl PowerShell aliases programmatically."
 
 Roman: *"I personally use this (forked from this https://github.com/ahmetb/kubectl-aliases) but fairly speaking, I prefer to memoize the native commands instead of custom aliases. So the only thing I use heavily is `k` instead of `kubectl`"*
+
+# Example Environment Sizing
+These folders contain pod sizing that was useful for a minimal [dev](dev-sizing/) or for a [medium sized production environment](prd-medium-sizing/).
