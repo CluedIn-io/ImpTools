@@ -1,0 +1,128 @@
+{
+    "name": "JSON_Flatten_Post_CluedIn",
+    "properties": {
+        "activities": [
+            {
+                "name": "JSON Flattening Dataflow",
+                "description": "Activity to launch the JSON Flattening Dataflow (DF)",
+                "type": "ExecuteDataFlow",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataflow": {
+                        "referenceName": "Project_S_DF_1",
+                        "type": "DataFlowReference"
+                    },
+                    "compute": {
+                        "coreCount": 8,
+                        "computeType": "General"
+                    },
+                    "traceLevel": "Fine"
+                }
+            },
+            {
+                "name": "DF_Output-CluedIn",
+                "type": "Copy",
+                "dependsOn": [
+                    {
+                        "activity": "JSON Flattening Dataflow",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "JsonSource",
+                        "storeSettings": {
+                            "type": "AzureBlobStorageReadSettings",
+                            "recursive": true,
+                            "enablePartitionDiscovery": false
+                        },
+                        "formatSettings": {
+                            "type": "JsonReadSettings"
+                        }
+                    },
+                    "sink": {
+                        "type": "RestSink",
+                        "httpRequestTimeout": "00:01:40",
+                        "requestInterval": 10,
+                        "requestMethod": "POST",
+                        "writeBatchSize": "10",
+                        "httpCompressionType": "none"
+                    },
+                    "enableStaging": false
+                },
+                "inputs": [
+                    {
+                        "referenceName": "Output_JSON",
+                        "type": "DatasetReference"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "referenceName": "CluedIn_JSON_Fatten_Endpoint",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "relativeUrl": "upload/api/endpoint/1422B6E4-5F3B-4C6F-XXXX-E38289C529BB"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Remove_DF_Output",
+                "description": "Removes the dataflow Post on successful processing ",
+                "type": "Delete",
+                "dependsOn": [
+                    {
+                        "activity": "DF_Output-CluedIn",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "Output_JSON",
+                        "type": "DatasetReference"
+                    },
+                    "enableLogging": false,
+                    "storeSettings": {
+                        "type": "AzureBlobStorageReadSettings",
+                        "recursive": false,
+                        "enablePartitionDiscovery": false
+                    }
+                }
+            }
+        ],
+        "folder": {
+            "name": "Project_S"
+        },
+        "annotations": [],
+        "lastPublishTime": "2023-01-12T15:34:32Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}

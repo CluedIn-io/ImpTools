@@ -1,0 +1,48 @@
+{
+    "name": "Project_S_DF_2",
+    "properties": {
+        "folder": {
+            "name": "Project_S"
+        },
+        "type": "MappingDataFlow",
+        "typeProperties": {
+            "sources": [
+                {
+                    "dataset": {
+                        "referenceName": "SRC_JSON",
+                        "type": "DatasetReference"
+                    },
+                    "name": "DataFlowNestedJSONSource"
+                }
+            ],
+            "sinks": [
+                {
+                    "dataset": {
+                        "referenceName": "Output_JSON",
+                        "type": "DatasetReference"
+                    },
+                    "name": "DataFlowSink"
+                }
+            ],
+            "transformations": [
+            
+            ],
+            "scriptLines": [
+                "source(output(",
+                "          d as (results as ({__metadata} as (uri as string, type as string), personIdExternal as string, userId as string, endDate as string, startDate as string, compInfoNav as (results as ({__metadata} as (uri as string, type as string), empPayCompRecurringNav as (results as ({__metadata} as (uri as string, type as string), payComponent as string, startDate as string, customString1 as string, paycompvalue as string)[]))[]), jobInfoNav as (results as ({__metadata} as (uri as string, type as string), startDate as string, employmentType as string, endDate as string, customString5 as string, eventReason as string, customString8 as string, customString15 as string, customString7 as string, customDouble1 as string, customString1 as string, location as string, customLong2 as string, customLong1 as string, department as string)[]))[])",
+                "     ),",
+                "     allowSchemaDrift: true,",
+                "     validateSchema: false,",
+                "     ignoreNoFilesFound: false,",
+                "     documentForm: 'arrayOfDocuments') ~> DataFlowNestedJSONSource",
+                "DataFlowNestedJSONSource sink(allowSchemaDrift: true,",
+                "     validateSchema: false,",
+                "     partitionFileNames:['output.json'],",
+                "     truncate: true,",
+                "     skipDuplicateMapInputs: true,",
+                "     skipDuplicateMapOutputs: true,",
+                "     partitionBy('hash', 1)) ~> DataFlowSink"
+            ]
+        }
+    }
+}

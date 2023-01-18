@@ -1,0 +1,24 @@
+{
+    "name": "Output_JSON",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "dataset",
+            "type": "LinkedServiceReference"
+        },
+        "folder": {
+            "name": "Project_S"
+        },
+        "annotations": [],
+        "type": "Json",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobStorageLocation",
+                "fileName": "output.json",
+                "folderPath": "Project_S/Output",
+                "container": "projects"
+            }
+        },
+        "schema": {}
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}

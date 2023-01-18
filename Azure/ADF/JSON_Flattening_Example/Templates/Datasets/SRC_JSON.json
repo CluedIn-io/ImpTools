@@ -1,0 +1,29 @@
+{
+  "name": "SRC_JSON",
+  "properties": {
+      "linkedServiceName": {
+          "referenceName": "dataset",
+          "type": "LinkedServiceReference"
+      },
+      "folder": {
+          "name": "Project_S"
+      },
+      "annotations": [],
+      "type": "Json",
+      "typeProperties": {
+          "location": {
+              "type": "AzureBlobStorageLocation",
+              "fileName": "Nested-JSON_example-Single.json",
+              "folderPath": "Project_S",
+              "container": "projects"
+          }
+      },
+      "schema": {
+          "type": "object",
+          "properties": {
+
+          }
+      }
+  },
+  "type": "Microsoft.DataFactory/factories/datasets"
+}
